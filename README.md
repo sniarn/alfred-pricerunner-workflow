@@ -14,6 +14,8 @@ Powerpack](https://www.alfredapp.com/powerpack/) to use this workflow.
 
 Type the keyword `price` into alfred followed by a search string.
 
+![Screenshot](screenshot.png)
+
 ## Installing
 
 Download the workflow from the [releases
