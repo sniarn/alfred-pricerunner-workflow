@@ -3,16 +3,17 @@
 import os
 import sys
 import string
-from workflow import Workflow3, web, ICON_WARNING
+from workflow import Workflow3, web
 from workflow.util import utf8ify
 
 SUGGEST_URL = "https://www.pricerunner.com/public/search/suggest/{}"
+DEFAULT_COUNTRY = "uk"
 GITHUB_SLUG = "sniarn/alfred-pricerunner-workflow"
 
 
 def suggest(query):
-    r = web.get(url=SUGGEST_URL.format(os.getenv('COUNTRY')),
-                params={'q': query})
+    country = os.getenv('COUNTRY') or DEFAULT_COUNTRY
+    r = web.get(url=SUGGEST_URL.format(country), params={'q': query})
     r.raise_for_status()
     return r.json()
 
@@ -82,10 +83,5 @@ if __name__ == u"__main__":
         help_url='https://github.com/{}'.format(GITHUB_SLUG))
     if wf.update_available:
         wf.start_update()
-    if not os.getenv('COUNTRY'):
-        wf.add_item('No country configured', 'Action this item to get help.',
-                    arg=wf.help_url, valid=True, icon=ICON_WARNING)
-        wf.send_feedback()
-        sys.exit(0)
     else:
         sys.exit(wf.run(main))
