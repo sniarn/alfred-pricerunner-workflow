@@ -32,7 +32,7 @@ writing):
 ## Thanks
 
 * [PriceRunner][pricerunner]
-* [Alfred-Workflow][alfred-workflow]]
+* [Alfred-Workflow][alfred-workflow]
 
 [alfred]: https://www.alfredapp.com
 [alfred-powerpack]: https://www.alfredapp.com/powerpack
