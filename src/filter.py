@@ -80,7 +80,8 @@ def main(wf):
 
 if __name__ == u"__main__":
     wf = Workflow3(
-        help_url='https://github.com/{}'.format(GITHUB_SLUG))
+         update_settings={'github_slug': GITHUB_SLUG},
+         help_url='https://github.com/{}'.format(GITHUB_SLUG))
     if wf.update_available:
         wf.start_update()
     else:
