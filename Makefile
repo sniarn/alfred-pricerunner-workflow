@@ -2,14 +2,7 @@ WORKFLOWS_DIR := ~/Library/Application\ Support/Alfred/Alfred.alfredpreferences/
 BUNDLE_ID := dk.sniarn.alfred-pricerunner-workflow
 WORKFLOW_NAME := PriceRunner
 
-all: dist
-
-dist: clean-dist clean-pyc
-	mkdir -p $(CURDIR)/dist
-	cd $(CURDIR)/src; zip -r ../dist/$(WORKFLOW_NAME).alfred3workflow *
-
-clean-dist:
-	rm -rf $(CURDIR)/dist
+all:
 
 clean-pyc:
 	find $(CURDIR)/src -name '*.pyc' -delete
@@ -22,5 +15,6 @@ unlink:
 
 update-lib:
 	/usr/bin/python -m pip install --target $(CURDIR)/src --no-compile --upgrade Alfred-Workflow
+	/usr/bin/python -m pip install --target $(CURDIR)/src/lib --no-compile --upgrade babel
 
-.PHONY: dist clean-dist clean-pyc link unlink update-lib
+.PHONY: clean-pyc link unlink update-lib

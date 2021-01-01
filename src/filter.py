@@ -1,19 +1,19 @@
 # encoding: utf-8
 
 import os
-import sys
 import string
+import sys
+
 from workflow import Workflow3, web
 from workflow.util import utf8ify
 
 SUGGEST_URL = "https://www.pricerunner.com/public/search/suggest/{}"
-DEFAULT_COUNTRY = "uk"
+COUNTRY = os.getenv('COUNTRY').lower() or "uk"
 GITHUB_SLUG = "sniarn/alfred-pricerunner-workflow"
 
 
 def suggest(query):
-    country = os.getenv('COUNTRY') or DEFAULT_COUNTRY
-    r = web.get(url=SUGGEST_URL.format(country), params={'q': query})
+    r = web.get(url=SUGGEST_URL.format(COUNTRY), params={'q': query})
     r.raise_for_status()
     return r.json()
 
@@ -24,17 +24,28 @@ def get_stars(product):
     return string.replace('☆☆☆☆☆', '☆', '★', maxreplace=rounded)
 
 
+def get_locale():
+    # There is a bug in Python that prevents us from easily getting the user's
+    # current locale. We use the COUNTRY workflow parameter instead.
+    return {
+        'dk': 'da_DK',
+        'uk': 'en_GB',
+        'se': 'sv_SE',
+    }[COUNTRY]
+
+
 def add_product_item(product):
     title = utf8ify(product['name'])
-    subtitle = '{} {} – {} – {}'.format(
-            product['cheapestPrice']['currency'],
-            product['cheapestPrice']['amount'],
+    from babel.numbers import format_currency
+    cheapest_price = utf8ify(format_currency(
+        float(product['lowestPrice']['amount']),
+        product['lowestPrice']['currency'],
+        locale=get_locale()))
+    subtitle = '{} – {} – {}'.format(
+            cheapest_price,
             utf8ify(product['categoryName']),
             get_stars(product))
-    largetext = '{} – {} {}'.format(
-        title,
-        product['cheapestPrice']['currency'],
-        product['cheapestPrice']['amount'])
+    largetext = '{} – {}'.format(title, cheapest_price)
     wf.add_item(
         title=title,
         subtitle=subtitle,
@@ -80,8 +91,9 @@ def main(wf):
 
 if __name__ == u"__main__":
     wf = Workflow3(
-         update_settings={'github_slug': GITHUB_SLUG},
-         help_url='https://github.com/{}'.format(GITHUB_SLUG))
+        libraries=['./lib'],
+        update_settings={'github_slug': GITHUB_SLUG},
+        help_url='https://github.com/{}'.format(GITHUB_SLUG))
     if wf.update_available:
         wf.start_update()
     else:

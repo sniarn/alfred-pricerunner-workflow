@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/src/filter.py",
             "console": "integratedTerminal",
             "env": {"COUNTRY": "DK"},
-            "args": ["playstation"],
+            "args": ["løbehjul"],
         }
     ]
 }
