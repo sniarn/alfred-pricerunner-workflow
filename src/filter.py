@@ -19,6 +19,9 @@ def suggest(query):
 
 
 def get_stars(product):
+    hasRating = 'rating' in product
+    if not hasRating:
+        return
     rating = float(product['rating']['averageRating'])
     rounded = int(round(rating))
     return string.replace('☆☆☆☆☆', '☆', '★', maxreplace=rounded)
@@ -41,10 +44,10 @@ def add_product_item(product):
         float(product['lowestPrice']['amount']),
         product['lowestPrice']['currency'],
         locale=get_locale()))
-    subtitle = '{} – {} – {}'.format(
-            cheapest_price,
-            utf8ify(product['categoryName']),
-            get_stars(product))
+    subtitle = ' - '.join(filter(None, (
+        cheapest_price,
+        utf8ify(product['categoryName']),
+        get_stars(product))))
     largetext = '{} – {}'.format(title, cheapest_price)
     wf.add_item(
         title=title,
